@@ -2,6 +2,7 @@
 import os
 import flask
 import MySQLdb
+import json 
 
 application = flask.Flask(__name__)
 application.debug = True
@@ -15,16 +16,21 @@ def index():
 
 class Storage():
   def __init__(self):
+    self.db_config = self._get_config()
     self.db = MySQLdb.connect(
-      user   = os.getenv('MYSQL_USERNAME'),
-      passwd = os.getenv('MYSQL_PASSWORD'),
-      db     = os.getenv('MYSQL_INSTANCE_NAME'),
-      host   = os.getenv('MYSQL_SERVICE_HOST'),
-      port   = int(os.getenv('MYSQL_SERVICE_PORT'))
+      user   = os.getenv('MYSQL_USERNAME') || self.db_config['user'],
+      passwd = os.getenv('MYSQL_PASSWORD') || self.db_config['passwd'],
+      db     = os.getenv('MYSQL_INSTANCE_NAME') || self.db_config['db'],
+      host   = os.getenv('MYSQL_SERVICE_HOST') || self.db_config['host'],
+      port   = int(os.getenv('MYSQL_SERVICE_PORT')) || self.db_config['port']
     )
 
     cur = self.db.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS pageviews(pageview INT)")
+
+  def _get_config():
+    with open('./config.json', 'r') as config_file:
+      return json.loads(config_file.read())
 
   def populate(self):
     cur = self.db.cursor()
