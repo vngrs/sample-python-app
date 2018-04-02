@@ -29,7 +29,7 @@ class Storage():
     cur.execute("CREATE TABLE IF NOT EXISTS pageviews(pageview INT)")
 
   def _get_config():
-    with open('./config.json', 'r') as config_file:
+    with open('/etc/app_config.json', 'r') as config_file:
       return json.loads(config_file.read())
 
   def populate(self):
