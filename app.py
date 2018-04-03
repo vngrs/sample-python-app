@@ -18,17 +18,17 @@ class Storage():
   def __init__(self):
     self.db_config = self._get_config()
     self.db = MySQLdb.connect(
-      user   = os.getenv('MYSQL_USERNAME') || self.db_config['user'],
-      passwd = os.getenv('MYSQL_PASSWORD') || self.db_config['passwd'],
-      db     = os.getenv('MYSQL_INSTANCE_NAME') || self.db_config['db'],
-      host   = os.getenv('MYSQL_SERVICE_HOST') || self.db_config['host'],
-      port   = int(os.getenv('MYSQL_SERVICE_PORT')) || self.db_config['port']
+      user   = self.db_config['user'],
+      passwd = self.db_config['passwd'],
+      db     = self.db_config['db'],
+      host   = self.db_config['host'],
+      port   = int(self.db_config['port'])
     )
 
     cur = self.db.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS pageviews(pageview INT)")
 
-  def _get_config():
+  def _get_config(self):
     with open('/etc/app_config.json', 'r') as config_file:
       return json.loads(config_file.read())
 
