@@ -2,6 +2,7 @@
 import os
 import flask
 import MySQLdb
+import json 
 
 application = flask.Flask(__name__)
 application.debug = True
@@ -15,16 +16,21 @@ def index():
 
 class Storage():
   def __init__(self):
+    self.db_config = self._get_config()
     self.db = MySQLdb.connect(
-      user   = os.getenv('MYSQL_USERNAME'),
-      passwd = os.getenv('MYSQL_PASSWORD'),
-      db     = os.getenv('MYSQL_INSTANCE_NAME'),
-      host   = os.getenv('MYSQL_SERVICE_HOST'),
-      port   = int(os.getenv('MYSQL_SERVICE_PORT'))
+      user   = self.db_config['user'],
+      passwd = self.db_config['passwd'],
+      db     = self.db_config['db'],
+      host   = self.db_config['host'],
+      port   = int(self.db_config['port'])
     )
 
     cur = self.db.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS pageviews(pageview INT)")
+
+  def _get_config(self):
+    with open('/etc/app_config.json', 'r') as config_file:
+      return json.loads(config_file.read())
 
   def populate(self):
     cur = self.db.cursor()
@@ -39,6 +45,6 @@ class Storage():
 
 
 if __name__ == "__main__":
-    application.run(host='0.0.0.0', port=3000)
+    application.run(host='0.0.0.0', port=80)
 
 
