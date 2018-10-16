@@ -16,21 +16,16 @@ def index():
 
 class Storage():
   def __init__(self):
-    self.db_config = self._get_config()
     self.db = MySQLdb.connect(
-      user   = self.db_config['user'],
-      passwd = self.db_config['passwd'],
-      db     = self.db_config['db'],
-      host   = self.db_config['host'],
-      port   = int(self.db_config['port'])
+      user   = os.getenv('MYSQL_USERNAME'),
+      passwd = os.getenv('MYSQL_PASSWORD'),
+      db     = os.getenv('MYSQL_DATABASE_NAME'),
+      host   = os.getenv('MYSQL_HOST'),
+      port   = int(os.getenv('MYSQL_PORT'))
     )
 
     cur = self.db.cursor()
     cur.execute("CREATE TABLE IF NOT EXISTS pageviews(pageview INT)")
-
-  def _get_config(self):
-    with open('/etc/app_config.json', 'r') as config_file:
-      return json.loads(config_file.read())
 
   def populate(self):
     cur = self.db.cursor()
