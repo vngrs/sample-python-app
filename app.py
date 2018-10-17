@@ -11,7 +11,7 @@ application.debug = True
 def index():
     storage = Storage()
     storage.populate()
-    return 'Hello! ' + str(storage.pageview())
+    return 'Hello, Microsoft!' + str(storage.pageview())
 
 
 class Storage():
